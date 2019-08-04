@@ -1,4 +1,4 @@
-# BufferView
+# ArrayBufferView
 
 Provides a low-level interface for reading and writing structured data in a binary ArrayBuffer.
 
