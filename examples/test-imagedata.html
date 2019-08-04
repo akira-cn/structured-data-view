@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/js/bufferview.js"></script>
+</head>
+<body>
+  <canvas id="app" width="400" height="400"></canvas>
+  <script>
+    function loadImage(url) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      return new Promise((resolve) => {
+        img.onload = function () {
+          resolve(img);
+        };
+        img.src = url;
+      });
+    }
+
+    (async function () {
+      const src = 'https://p1.ssl.qhimg.com/t011f60e5399df3d7a6.png';
+      const img = await loadImage(src);
+
+      const canvas = document.getElementById('app');
+      const context = canvas.getContext('2d');
+
+      context.drawImage(img, 0, 0, img.width, img.height);
+
+      const imageData = context.getImageData(0, 0, img.width, img.height);
+      const buffer = imageData.data.buffer;
+
+      const struct = {
+        r: 8,
+        g: 8,
+        b: 8,
+        a: 8,
+      };
+
+      const arr = new BufferView(struct, buffer);
+      arr.fill({r: 0});
+
+      context.putImageData(imageData, 0, 0);
+    }());
+  </script>
+</body>
+</html>
