@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="/js/bufferview.js"></script>
+  <script src="/js/arraybufferview.js"></script>
 </head>
 <body>
   <canvas id="app" width="400" height="400"></canvas>
@@ -40,8 +40,8 @@
         a: 8,
       };
 
-      const arr = new BufferView(struct, buffer);
-      arr.fill({r: 0});
+      const view = new ArrayBufferView(struct, buffer);
+      view.fill({r: 0});
 
       context.putImageData(imageData, 0, 0);
     }());

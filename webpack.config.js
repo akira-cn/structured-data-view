@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const path = require('path');
-const packageConfig = require('./package.json');
 
 module.exports = function (env = {}) {
   return {
@@ -8,9 +7,9 @@ module.exports = function (env = {}) {
     entry: './src/index',
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: `${packageConfig.name}.js`,
+      filename: 'arraybufferview.js',
       publicPath: '/js/',
-      library: 'BufferView',
+      library: 'ArrayBufferView',
       libraryTarget: 'umd',
       libraryExport: 'default',
     },

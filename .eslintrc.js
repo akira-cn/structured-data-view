@@ -1,6 +1,6 @@
 module.exports = {
   globals: {
-    BufferView: true,
+    ArrayBufferView: true,
   },
   extends:  "eslint-config-sprite",
   plugins: ['html'],
