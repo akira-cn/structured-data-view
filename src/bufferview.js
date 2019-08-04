@@ -1,26 +1,22 @@
 import StructuredBuffer from './buffer';
 
 const _struct = Symbol('struct');
-const _buffers = Symbol('buffers');
+const _stuctedBuffer = Symbol('structedBuffer');
 
 export default class BufferView {
   constructor(struct, buffer = 1) {
-    const size = Object.values(struct).reduce((a, b) => {
-      if(b === Number) {
-        b = 64;
-      } else if(b === Boolean) {
-        b = 1;
-      }
-      return a + b;
-    }, 0);
+    this[_stuctedBuffer] = new StructuredBuffer(struct);
+    const bitWidth = this[_stuctedBuffer].bitWidth;
 
     let length;
     if(typeof buffer === 'number') {
       length = buffer;
-      buffer = new ArrayBuffer(Math.ceil((size * length) / 8));
+      buffer = new ArrayBuffer(Math.ceil((bitWidth * length) / 8));
     } else {
-      length = Math.ceil(buffer.byteLength * 8 / size);
+      length = Math.floor(buffer.byteLength * 8 / bitWidth);
     }
+
+    this[_stuctedBuffer].buffer = buffer;
 
     Object.defineProperty(this, 'buffer', {
       get() {
@@ -30,7 +26,7 @@ export default class BufferView {
 
     Object.defineProperty(this, 'bitWidth', {
       get() {
-        return size;
+        return bitWidth;
       },
     });
 
@@ -41,31 +37,36 @@ export default class BufferView {
     });
 
     this[_struct] = struct;
-    this[_buffers] = new Map();
   }
 
   fill(obj = {}) {
-    [...this].forEach(buffer => buffer.fromObject(obj));
+    for(let i = 0; i < this.length; i++) {
+      this.set(i, obj);
+    }
     return this;
   }
 
   forEach(callback, thisArg) {
-    [...this].forEach(function (buffer, i, arr) { callback.call(this, buffer, i, arr) }, null);
+    for(let i = 0; i < this.length; i++) {
+      callback.call(thisArg, this.get(i), i, this);
+    }
+  }
+
+  set(idx, obj = {}) {
+    if(idx < this.length) {
+      const bitOffset = this.bitWidth * idx;
+      this[_stuctedBuffer].bitOffset = bitOffset;
+      this[_stuctedBuffer].fromObject(obj);
+    } else {
+      throw new Error('Index out of range.');
+    }
   }
 
   get(idx) {
     if(idx < this.length) {
-      if(this[_buffers].has(idx)) return this[_buffers].get(idx);
       const bitOffset = this.bitWidth * idx;
-      const buffer = new StructuredBuffer(this[_struct], this.buffer, bitOffset);
-      this[_buffers].set(idx, buffer);
-      return buffer;
-    }
-  }
-
-  * [Symbol.iterator]() {
-    for(let i = 0; i < this.length; i++) {
-      yield this.get(i);
+      this[_stuctedBuffer].bitOffset = bitOffset;
+      return this[_stuctedBuffer].toObject();
     }
   }
 }

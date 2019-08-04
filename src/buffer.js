@@ -1,7 +1,5 @@
 import {toBuffer, fromBuffer} from './utils';
 
-const _keys = Symbol('keys');
-const _struct = Symbol('struct');
 /*
   struct: {
     key: size | Number | Boolean
@@ -10,11 +8,12 @@ const _struct = Symbol('struct');
   size: 1-64，Number、Boolean
  */
 export default class StructuredBuffer {
-  constructor(struct, buffer = null, bitOffset = 0) {
-    let offset = bitOffset;
-    this[_keys] = new Set();
+  constructor(struct, buffer = null) {
+    let offset = 0;
+    this.keys = new Set();
+
     const metaData = Object.entries(struct).map(([key, size]) => {
-      this[_keys].add(key);
+      this.keys.add(key);
 
       if(key === 'buffer' || key === 'bitWidth') {
         throw new Error(`${key} is reserved key, use another name pls.`);
@@ -33,21 +32,13 @@ export default class StructuredBuffer {
       return ret;
     });
 
-    if(!buffer) {
-      buffer = new ArrayBuffer(Math.ceil(offset / 8));
-    }
-
-    this[_struct] = struct;
-
-    Object.defineProperty(this, 'buffer', {
-      get() {
-        return buffer;
-      },
-    });
+    this.struct = struct;
+    this.buffer = buffer;
+    this.bitOffset = 0;
 
     Object.defineProperty(this, 'bitWidth', {
       get() {
-        return offset - bitOffset;
+        return offset;
       },
     });
 
@@ -57,43 +48,43 @@ export default class StructuredBuffer {
       if(size === 64 && exType === Number) {
         Object.defineProperty(this, key, {
           get() {
-            return fromBuffer(buffer, offset, size, 'Float64');
+            return fromBuffer(this.buffer, offset + this.bitOffset, size, 'Float64');
           },
           set(val) {
-            toBuffer(buffer, val, offset, size);
+            toBuffer(this.buffer, val, offset + this.bitOffset, size);
           },
           enumerable: true,
         });
       } else if(size === 1 && exType === Boolean) {
         Object.defineProperty(this, key, {
           get() {
-            return !!fromBuffer(buffer, offset, size, 'Uint32');
+            return !!fromBuffer(this.buffer, offset + this.bitOffset, size, 'Uint32');
           },
           set(val) {
-            toBuffer(buffer, val, offset, size);
+            toBuffer(this.buffer, val, offset + this.bitOffset, size);
           },
           enumerable: true,
         });
       } else if(size > 32) {
         Object.defineProperty(this, key, {
           get() {
-            return fromBuffer(buffer, offset, size, 'BigUint64');
+            return fromBuffer(this.buffer, offset + this.bitOffset, size, 'BigUint64');
           },
           set(val) {
             if(typeof val !== 'bigint') { // eslint-disable-line valid-typeof
               val = BigInt(val); // eslint-disable-line no-undef
             }
-            toBuffer(buffer, val, offset, size);
+            toBuffer(this.buffer, val, offset + this.bitOffset, size);
           },
           enumerable: true,
         });
       } else {
         Object.defineProperty(this, key, {
           get() {
-            return fromBuffer(buffer, offset, size, 'Uint32');
+            return fromBuffer(this.buffer, offset + this.bitOffset, size, 'Uint32');
           },
           set(val) {
-            toBuffer(buffer, val, offset, size);
+            toBuffer(this.buffer, val, offset + this.bitOffset, size);
           },
           enumerable: true,
         });
@@ -103,7 +94,7 @@ export default class StructuredBuffer {
 
   fromObject(obj = {}) {
     const keys = Object.keys(obj);
-    const keysMap = this[_keys];
+    const keysMap = this.keys;
     keys.forEach((key) => {
       if(keysMap.has(key)) {
         this[key] = obj[key];
@@ -114,7 +105,7 @@ export default class StructuredBuffer {
 
   toObject() {
     const ret = {};
-    [...this[_keys]].forEach((key) => {
+    [...this.keys].forEach((key) => {
       ret[key] = this[key];
     });
     return ret;

@@ -10,24 +10,21 @@
 <body>
   <script>
     const struct = {
-      a: Boolean,
-      b: 11,
-      c: Number,
-      d: 43,
+      a: 1,
+      b: 5,
+      c: 2,
     };
 
-    const view = new ArrayBufferView(struct, 10);
-    view.set(0, {
-      a: true,
-      c: 3.14,
-      d: 100,
-    });
-    view.set(1, {
-      b: 0xff,
-    });
+    const buffer = new ArrayBuffer(100);
+
+    const view = new ArrayBufferView(struct, buffer);
+
+    view.fill({a: 1, b: 12, c: 3});
+
     const data0 = view.get(0);
-    const data1 = view.get(1);
-    console.log(data0, data1);
+
+    console.log(data0.b); // 12
+    console.log(data0.c); // 3
   </script>
 </body>
 </html>

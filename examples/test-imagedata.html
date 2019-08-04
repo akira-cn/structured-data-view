@@ -41,7 +41,16 @@
       };
 
       const view = new ArrayBufferView(struct, buffer);
-      view.fill({r: 0});
+      // view.fill({r: 0});
+      // make image color black an white
+      view.forEach(({r, g, b, a}, i, view) => {
+        view.set(i, {
+          r: (r + g + b) / 3,
+          g: (r + g + b) / 3,
+          b: (r + g + b) / 3,
+          a,
+        });
+      });
 
       context.putImageData(imageData, 0, 0);
     }());
