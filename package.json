@@ -1,6 +1,6 @@
 {
   "name": "arraybufferview",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Provides a low-level interface for reading and writing structured data in a binary ArrayBuffer.",
   "main": "dist/arraybufferview.js",
   "module": "src/index.js",
