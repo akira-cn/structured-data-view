@@ -1,8 +1,8 @@
 {
-  "name": "arraybufferview",
-  "version": "0.1.1",
+  "name": "structured-data-view",
+  "version": "0.1.0",
   "description": "Provides a low-level interface for reading and writing structured data in a binary ArrayBuffer.",
-  "main": "dist/arraybufferview.js",
+  "main": "dist/structed-data-view.js",
   "module": "src/index.js",
   "scripts": {
     "start": "webpack-dev-server --env.server=examples --watch-poll",

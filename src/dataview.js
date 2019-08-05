@@ -3,7 +3,7 @@ import StructuredBuffer from './buffer';
 const _struct = Symbol('struct');
 const _stuctedBuffer = Symbol('structedBuffer');
 
-export default class BufferView {
+export default class DataView {
   constructor(struct, buffer = 1) {
     this[_stuctedBuffer] = new StructuredBuffer(struct);
     const bitWidth = this[_stuctedBuffer].bitWidth;
@@ -41,18 +41,18 @@ export default class BufferView {
 
   fill(obj = {}) {
     for(let i = 0; i < this.length; i++) {
-      this.set(i, obj);
+      this.setData(i, obj);
     }
     return this;
   }
 
   forEach(callback, thisArg) {
     for(let i = 0; i < this.length; i++) {
-      callback.call(thisArg, this.get(i), i, this);
+      callback.call(thisArg, this.getData(i), i, this);
     }
   }
 
-  set(idx, obj = {}) {
+  setData(idx, obj = {}) {
     if(idx < this.length) {
       const bitOffset = this.bitWidth * idx;
       this[_stuctedBuffer].bitOffset = bitOffset;
@@ -62,7 +62,7 @@ export default class BufferView {
     }
   }
 
-  get(idx) {
+  getData(idx) {
     if(idx < this.length) {
       const bitOffset = this.bitWidth * idx;
       this[_stuctedBuffer].bitOffset = bitOffset;

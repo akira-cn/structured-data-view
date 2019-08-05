@@ -1,4 +1,4 @@
-# ArrayBufferView
+# StructuredDataView
 
 Provides a low-level interface for reading and writing structured data in a binary ArrayBuffer.
 
@@ -7,13 +7,13 @@ Provides a low-level interface for reading and writing structured data in a bina
 From NPM:
 
 ```js
-import ArrayBufferView from 'arraybufferview';
+import StructuredDataView from 'structured-data-view';
 ```
 
 From CDN:
 
 ```js
-<script src="http://unpkg.com/arraybufferview/dist/arraybufferview.js"></script>
+<script src="http://unpkg.com/structured-data-view/dist/structured-data-view.js"></script>
 ```
 
 ## Examples
@@ -29,17 +29,17 @@ const struct = {
 
 const buffer = new ArrayBuffer(100);
 
-const view = new ArrayBufferView(struct, buffer);
+const view = new StructuredDataView(struct, buffer);
 
 view.fill({a: 1, b: 12, c: 3});
 
-const data0 = view.get(0);
+const data0 = view.getData(0);
 
 console.log(data0.b); // 12
 console.log(data0.c); // 3
 ```
 
-Use ArrayBufferView to manipulate binary data such as blob or image data.
+Use StructuredDataView to manipulate binary data such as blob or image data.
 
 ```js
 function loadImage(url) {
@@ -57,12 +57,12 @@ function loadImage(url) {
   const src = 'https://p1.ssl.qhimg.com/t011f60e5399df3d7a6.png';
   const img = await loadImage(src);
 
-  const canvas = document.getElementById('app');
-  const context = canvas.getContext('2d');
+  const canvas = document.getDataElementById('app');
+  const context = canvas.getDataContext('2d');
 
   context.drawImage(img, 0, 0, img.width, img.height);
 
-  const imageData = context.getImageData(0, 0, img.width, img.height);
+  const imageData = context.getDataImageData(0, 0, img.width, img.height);
   const buffer = imageData.data.buffer;
 
   const struct = {
@@ -72,11 +72,11 @@ function loadImage(url) {
     a: 8,
   };
 
-  const view = new ArrayBufferView(struct, buffer);
+  const view = new StructuredDataView(struct, buffer);
   
   // make image color black an white
   view.forEach(({r, g, b, a}, i, view) => {
-    view.set(i, {
+    view.setData(i, {
       r: (r + g + b) / 3,
       g: (r + g + b) / 3,
       b: (r + g + b) / 3,
@@ -94,9 +94,9 @@ function loadImage(url) {
 
 #### constructor(structure, arrayBufferOrLength)
 
-The constructor of the ArrayBufferView.
+The constructor of the StructuredDataView.
 
-- The structure is a metadata of the ArrayBufferView.
+- The structure is a metadata of the StructuredDataView.
 
 ```js
 const structure = {
@@ -108,15 +108,15 @@ const structure = {
 }
 
 // create an array buffer with 1000 structured data items.
-const view = new ArrayBufferView(structure, 1000);
+const view = new StructuredDataView(structure, 1000);
 ```
 
-### set(index, data)
+### setData(index, data)
 
-Set data to ArrayBufferView.
+Set data to StructuredDataView.
 
 ```js
-view.set(2, {
+view.setData(2, {
   a: 0,
   c: 0xF,
   d: 3.14,
@@ -124,20 +124,20 @@ view.set(2, {
 })
 ```
 
-### get(index)
+### getData(index)
 
-Get data from ArrayBufferView.
+Get data from StructuredDataView.
 
 ### forEach(callback)
 
 The forEach() method executes a provided function once for each structured data blocks.
 
 ```js
-const view = new ArrayBufferView(structure, 1000);
+const view = new StructuredDataView(structure, 1000);
 
 view.forEach((data, index, view) => {
   data.x *= 2;
-  view.set(index, data);
+  view.setData(index, data);
 });
 ```
 
@@ -155,7 +155,7 @@ const struct = {
   a: 8,
 };
 
-const view = new ArrayBufferView(struct, buffer);
+const view = new StructuredDataView(struct, buffer);
 view.fill({r: 0}); // red channel set to zero.
 ```
 

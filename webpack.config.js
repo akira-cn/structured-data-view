@@ -7,9 +7,9 @@ module.exports = function (env = {}) {
     entry: './src/index',
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: 'arraybufferview.js',
+      filename: 'structured-data-view.js',
       publicPath: '/js/',
-      library: 'ArrayBufferView',
+      library: 'StructuredDataView',
       libraryTarget: 'umd',
       libraryExport: 'default',
     },

@@ -1,3 +1,3 @@
-import BufferView from './bufferview';
+import DataView from './dataview';
 
-export default BufferView;
+export default DataView;

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="/js/arraybufferview.js"></script>
+  <script src="/js/structured-data-view.js"></script>
 </head>
 <body>
   <script>
@@ -17,11 +17,11 @@
 
     const buffer = new ArrayBuffer(100);
 
-    const view = new ArrayBufferView(struct, buffer);
+    const view = new StructuredDataView(struct, buffer);
 
     view.fill({a: 1, b: 12, c: 3});
 
-    const data0 = view.get(0);
+    const data0 = view.getData(0);
 
     console.log(data0.b); // 12
     console.log(data0.c); // 3
